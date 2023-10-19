@@ -3,8 +3,12 @@
 # Import
 import pandas as pd
 import plotly.express as px
+import numpy as np
+import plotly.io as pio
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+
+pio.templates.default = "simple_white"
 
 RAW_DATA_DIR = "data/raw_data"
 agg_inscription = pd.read_csv(f"{RAW_DATA_DIR}/agg_inscription.csv")
@@ -46,8 +50,19 @@ def custom_legend_name(figure, new_names: list):
     for i, new_name in enumerate(new_names):
         figure.data[i].name = new_name
 
-# Statistics
 
+####################################################################################################
+# Statistics
+####################################################################################################
+
+# Total Inscriptions to Date
+total_inscriptions = int(max(df.Total_Inscriptions))
+
+# Total Inscription Fees (BTC) to Date
+total_fees_BTC = np.round(max(df.Total_fees), 2)
+
+# Total Inscription Fees (USD to Date)
+total_fees_USD = np.round(sum(df.Daily_fees * df.Price), 2)
 
 
 ####################################################################################################
@@ -91,6 +106,7 @@ fig2.update_xaxes(
     tickformatstops=tickformatstops_param,
 )
 fig2.update_yaxes(title_text="Size Usage")
+fig2.update_layout(legend_title_text="Size")
 custom_legend_name(fig2, ["bytes", "vbytes"])
 
 # Figure 3: Inscription Fees Over Time
@@ -104,7 +120,6 @@ fig3.add_trace(
     go.Scatter(x=df.DATE, y=df.Total_fees, name="Total"),
     secondary_y=True,
 )
-fig3.update_layout(title_text="Inscription Fees")
 fig3.update_xaxes(
     title_text="Date",
     rangeslider_visible=True,
@@ -113,6 +128,7 @@ fig3.update_xaxes(
 )
 fig3.update_yaxes(title_text="Daily Volume", secondary_y=False)
 fig3.update_yaxes(title_text="Total Volume", secondary_y=True)
+fig3.update_layout(title_text="Inscription Fees")
 custom_legend_name(fig3, ["Daily", "Cumulative"])
 
 # Figure 4: Inscription Fee per Category Over Time
@@ -123,15 +139,31 @@ fig4 = px.line(
     y="Ord_Daily_fees",
     color="MIME_types",
     title="Daily Fees by Inscription Type",
+    category_orders={
+        "MIME_types": [
+            "text",
+            "image",
+            "application",
+            "model",
+            "video",
+            "audio",
+            "other",
+        ]
+    },
 )
 fig4.update_xaxes(
     title="Date",
-    type = "date",
+    type="date",
+    categoryorder="category descending",
     rangeslider_visible=True,
     rangeselector=rangeselector_param,
     tickformatstops=tickformatstops_param,
 )
 fig4.update_yaxes(title_text="Daily Fees")
+fig4.update_layout(legend_title_text="Inscription Type")
+custom_legend_name(
+    fig4, ["text", "image", "application", "3D model", "video", "audio", "other"]
+)
 # Figure 5: Inscriptions by Category Over Time
 
 fig5 = px.bar(
@@ -140,16 +172,29 @@ fig5 = px.bar(
     y="Inscriptions",
     color="MIME_types",
     title="Number of Inscriptions by Type",
+    category_orders={
+        "MIME_types": [
+            "text",
+            "image",
+            "application",
+            "model",
+            "video",
+            "audio",
+            "other",
+        ]
+    },
 )
 fig5.update_xaxes(
-    
     title="Date",
     rangeslider_visible=True,
     rangeselector=rangeselector_param,
     tickformatstops=tickformatstops_param,
 )
 fig5.update_yaxes(title_text="Number of Inscriptions")
-
+fig5.update_layout(legend_title_text="Inscription Type")
+custom_legend_name(
+    fig5, ["text", "image", "application", "3D model", "video", "audio", "other"]
+)
 
 # Figure 6: Distribution of Different Inscription Categories
 
@@ -157,7 +202,19 @@ fig6 = px.pie(
     inscription_df,
     values="Inscriptions",
     names="MIME_types",
+    category_orders={
+        "MIME_types": [
+            "text",
+            "image",
+            "application",
+            "model",
+            "video",
+            "audio",
+            "other",
+        ]
+    },
     title="Proportion of Inscription Types",
 )
-
-# Figure 7: Ordinal Sat/vB 
+fig6.update_layout(legend_title_text="Inscription Type")
+# custom_legend_name(fig6, ['text', 'image', 'application', '3d model', 'video', 'audio', 'other'])
+# Figure 7: Ordinal Sat/vB
