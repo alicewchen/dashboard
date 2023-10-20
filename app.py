@@ -13,7 +13,7 @@ from scripts.static_figures import (
     fig3,
     fig4,
 )
-from scripts.text import ordinal_intro, brc20, footnotes
+from scripts.text import ordinal_intro, brc20
 from scripts.layout_content import num_inscripts_and_ord_size_usage, num_inscr_and_p_inscr_type
 
 # Create the Dash app
@@ -31,6 +31,7 @@ app.layout = html.Div(
             ),
             style={"text-align": "center"},
         ),
+        # Stats Overview
         html.Div(
             dbc.Row(
                 [
@@ -86,11 +87,15 @@ app.layout = html.Div(
                 align="center",
             ),
         ),
+        # Introduction
         html.Div(
             dcc.Markdown(ordinal_intro), style={"width": "95%", "text-align": "justify"}
         ),
+        # Static Figures: Number of Inscriptions Over Time & Ordinal Size Usage Over Time
         num_inscripts_and_ord_size_usage,
+        # Highlight May 2023 BRC-20 minting spree
         html.Div(dcc.Markdown(brc20), style={"width": "95%", "text-align": "justify"}),
+        # Dynamic Figures: Ordinal Fees paid in USD/BTC Over Time & Inscription Fee USD/BTC per Category Over Time
         html.Div(
             [
                 dbc.Row(
