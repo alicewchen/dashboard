@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 # Import
-import pandas as pd
 import plotly.express as px
 import numpy as np
 import plotly.io as pio
@@ -15,7 +14,6 @@ from scripts.utils_data import (
     mime_category_order,
     custom_legend_name,
 )
-
 pio.templates.default = "simple_white"
 
 
@@ -77,54 +75,10 @@ fig2.update_yaxes(title_text="Size Usage")
 fig2.update_layout(legend_title_text="Size")
 custom_legend_name(fig2, ["bytes", "vbytes"])
 
-# Ordinal Fees paid in USD/BTC Over Time
-fig3 = make_subplots(specs=[[{"secondary_y": True}]])
-fig3.add_trace(
-    go.Scatter(x=df.DATE, y=df.Ord_Daily_fees, name="Daily"),
-    secondary_y=False,
-)
-fig3.add_trace(
-    go.Scatter(x=df.DATE, y=df.Ord_Total_fees, name="Total"),
-    secondary_y=True,
-)
-fig3.update_layout(title_text="Ordinal Fees Paid")
-fig3.update_xaxes(
-    title_text="Date",
-    rangeslider_visible=True,
-    rangeselector=rangeselector_param,
-    tickformatstops=tickformatstops_param,
-)
-fig3.update_yaxes(title_text="Daily Fees", secondary_y=False)
-fig3.update_yaxes(title_text="Total Fees", secondary_y=True)
-custom_legend_name(fig3, ["Daily", "Cumulative"])
 
+# Figure 3: Inscriptions by Category Over Time
 
-# Figure 4: Inscription Fee per Category Over Time
-
-fig4 = px.line(
-    inscription_df,
-    x="DATE",
-    y="Ord_Daily_fees",
-    color="MIME_types",
-    title="Daily Fees by Inscription Type",
-    category_orders=mime_category_order
-)
-fig4.update_xaxes(
-    title="Date",
-    type="date",
-    categoryorder="category descending",
-    rangeslider_visible=True,
-    rangeselector=rangeselector_param,
-    tickformatstops=tickformatstops_param,
-)
-fig4.update_yaxes(title_text="Daily Fees")
-fig4.update_layout(legend_title_text="Inscription Type")
-custom_legend_name(
-    fig4, ["text", "image", "application", "3D model", "video", "audio", "other"]
-)
-# Figure 5: Inscriptions by Category Over Time
-
-fig5 = px.bar(
+fig3 = px.bar(
     inscription_df,
     x="DATE",
     y="Inscriptions",
@@ -132,38 +86,38 @@ fig5 = px.bar(
     title="Number of Inscriptions by Type",
     category_orders=mime_category_order
 )
-fig5.update_xaxes(
+fig3.update_xaxes(
     title="Date",
     rangeslider_visible=True,
     rangeselector=rangeselector_param,
     tickformatstops=tickformatstops_param,
 )
-fig5.update_yaxes(title_text="Number of Inscriptions")
-fig5.update_layout(legend_title_text="Inscription Type")
+fig3.update_yaxes(title_text="Number of Inscriptions")
+fig3.update_layout(legend_title_text="Inscription Type")
 custom_legend_name(
-    fig5, ["text", "image", "application", "3D model", "video", "audio", "other"]
+    fig3, ["text", "image", "application", "3D model", "video", "audio", "other"]
 )
 
-# Figure 6: Distribution of Different Inscription Categories
+# Figure 4: Distribution of Different Inscription Categories
 
-fig6 = px.pie(
+fig4 = px.pie(
     inscription_df,
     values="Inscriptions",
     names="MIME_types",
     category_orders=mime_category_order,
     title="Proportion of Inscription Types",
 )
-fig6.update_layout(legend_title_text="Inscription Type")
+fig4.update_layout(legend_title_text="Inscription Type")
 
 #####################################################################################################
 # Store All Static Figures in Dictionary
 #####################################################################################################
-all_fig = [fig1, fig2, fig3, fig4, fig5, fig6]
+all_fig = [fig1, fig2, fig3, fig4]
 static_fig = {}
 for idx, f in enumerate(all_fig):
     static_fig.update({f"static-fig-{idx+1}": f})
 
-# custom_legend_name(fig6, ['text', 'image', 'application', '3d model', 'video', 'audio', 'other'])
+# custom_legend_name(fig4, ['text', 'image', 'application', '3d model', 'video', 'audio', 'other'])
 # Figure 7: Ordinal Sat/vB
 
 #####################################################################################################

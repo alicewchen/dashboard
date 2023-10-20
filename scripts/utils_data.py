@@ -10,7 +10,10 @@ inscription_df = pd.read_csv(f"{RAW_DATA_DIR}/inscription_by_category.csv")
 df = pd.merge(agg_inscription, btc_fee_size, on="DATE")
 df = pd.merge(df, daily_btcusd, on="DATE")
 df["ord_sat_vSize"] = df["Ord_vSize_Usage"] / df["Ord_Daily_fees"]
-
+df.loc[:,"Ord_Daily_fees_USD"] = df.Ord_Daily_fees * df.Price
+df.loc[:,"Ord_Total_fees_USD"] = df.Ord_Total_fees * df.Price
+inscription_df = inscription_df.merge(df.loc[:,['DATE','Price']], left_on ="DATE", right_on = "DATE")
+inscription_df.loc[:,'Ord_Daily_fees_USD'] = inscription_df.Ord_Daily_fees *inscription_df.Price
 # Graph params
 rangeselector_param = dict(
     buttons=[

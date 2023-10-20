@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 import plotly.express as px
-import dash
+from scripts.initialize_app import app
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
@@ -10,14 +10,12 @@ from scripts.static_figures import (
     total_inscriptions,
     total_fees_BTC,
     total_fees_USD,
-    fig3,
-    fig4,
 )
+from scripts.dynamic_figures import dcc_graph_fig1, dcc_graph_fig2
 from scripts.text import ordinal_intro, brc20
 from scripts.layout_content import num_inscripts_and_ord_size_usage, num_inscr_and_p_inscr_type
 
 # Create the Dash app
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
 server = app.server
 
 
@@ -110,17 +108,11 @@ app.layout = html.Div(
                 dbc.Row(
                     [
                         dbc.Col(
-                            dcc.Graph(
-                                id="figure-fig3",
-                                figure=fig3,
-                            ),
-                            style={"width": "50%"},
+                            dcc_graph_fig1,
+                            style={"width": "50%"}
                         ),
                         dbc.Col(
-                            dcc.Graph(
-                                id="figure-fig4",
-                                figure=fig4,
-                            ),
+                            dcc_graph_fig2,
                             style={"width": "50%"},
                         ),
                     ],
