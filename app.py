@@ -6,18 +6,15 @@ import dash
 from dash import dcc, html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
-from scripts.figures import (
+from scripts.static_figures import (
     total_inscriptions,
     total_fees_BTC,
     total_fees_USD,
-    fig1,
-    fig2,
     fig3,
     fig4,
-    fig5,
-    fig6,
 )
-from scripts.text import ordinal_intro
+from scripts.text import ordinal_intro, brc20, footnotes
+from scripts.layout_content import num_inscripts_and_ord_size_usage, num_inscr_and_p_inscr_type
 
 # Create the Dash app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.FLATLY])
@@ -28,6 +25,12 @@ server = app.server
 app.layout = html.Div(
     children=[
         html.H1("Bitcoin Ordinals", style={"text-align": "center"}),
+        html.Div(
+            dcc.Markdown(
+                "*Data was collected from [Dune](https://dune.com) on Oct 18,2023*"
+            ),
+            style={"text-align": "center"},
+        ),
         html.Div(
             dbc.Row(
                 [
@@ -86,82 +89,52 @@ app.layout = html.Div(
         html.Div(
             dcc.Markdown(ordinal_intro), style={"width": "95%", "text-align": "justify"}
         ),
+        num_inscripts_and_ord_size_usage,
+        html.Div(dcc.Markdown(brc20), style={"width": "95%", "text-align": "justify"}),
         html.Div(
             [
-                dcc.Graph(
-                    id="figure-fig1",
-                    figure=fig1,
-                    style={
-                        "display": "flex",
-                        "width": "50%",
-                    },
+                dbc.Row(
+                    dcc.RadioItems(
+                        id="radio-fig3-BTCUSD",
+                        options=["BTC", "USD"],
+                        value="BTC",
+                        inline=True,
+                    ),
+                    style={"align": "center", "text-align": "center"},
                 ),
-                dcc.Graph(
-                    id="figure-fig2",
-                    figure=fig2,
-                    style={
-                        "display": "flex",
-                        "width": "50%",
-                    },
-                ),
-            ],
-            style={"display": "flex", "flex-direction": "row"},
-        ),
-        html.Div(
-            dcc.Markdown(ordinal_intro), style={"width": "95%", "text-align": "justify"}
-        ),
-        html.Div(
-            [
-                dcc.Graph(
-                    id="figure-fig3",
-                    figure=fig3,
-                    style={
-                        "display": "flex",
-                        "width": "50%",
-                    },
-                ),
-                dcc.Graph(
-                    id="figure-fig4",
-                    figure=fig4,
-                    style={
-                        "display": "flex",
-                        "width": "50%",
-                    },
-                ),
-            ],
-            style={"display": "flex", "flex-direction": "row"},
-        ),
-        html.Div(
-            dbc.Row(
-                dbc.Col(
+                dbc.Row(
                     [
-                        dcc.Graph(
-                            id="figure-fig5",
-                            figure=fig5,
-                            style={
-                                "display": "flex",
-                                "flex-direction": "row",
-                                "width": "50%",
-                            },
+                        dbc.Col(
+                            dcc.Graph(
+                                id="figure-fig3",
+                                figure=fig3,
+                            ),
+                            style={"width": "50%"},
                         ),
-                        dcc.Graph(
-                            id="figure-fig6",
-                            figure=fig6,
-                            style={
-                                "display": "flex",
-                                "flex-direction": "row",
-                                "width": "50%",
-                            },
+                        dbc.Col(
+                            dcc.Graph(
+                                id="figure-fig4",
+                                figure=fig4,
+                            ),
+                            style={"width": "50%"},
                         ),
                     ],
                     style={
                         "display": "flex",
-                        "flex-direction": "row",
+                        "width": "100%",
+                        "align": "center",
+                        "text-align": "center",
                     },
                 ),
-                style={"height": "600px"},
-            ),
+            ],
+            style={
+                # "width": "95%",
+                "align": "center",
+                "text-align": "center",
+            },
         ),
+        num_inscr_and_p_inscr_type,
+        html.Div(dcc.Markdown(footnotes), style={"width": "95%", "text-align": "left"}),
     ],
     style={
         # "display": "flex",

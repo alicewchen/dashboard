@@ -7,19 +7,20 @@ import numpy as np
 import plotly.io as pio
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
+from dash.dependencies import Input, Output, State
 
 pio.templates.default = "simple_white"
 
 RAW_DATA_DIR = "data/raw_data"
 agg_inscription = pd.read_csv(f"{RAW_DATA_DIR}/agg_inscription.csv")
-btc_avg_fee = pd.read_csv(f"{RAW_DATA_DIR}/btc_avg_fee.csv")
+btc_fee_size = pd.read_csv(f"{RAW_DATA_DIR}/btc_fee_size.csv")
 daily_btcusd = pd.read_csv(f"{RAW_DATA_DIR}/daily_btcusd.csv")
 inscription_df = pd.read_csv(f"{RAW_DATA_DIR}/inscription_by_category.csv")
 
 # Merge the dataframes on the 'DATE' column
-df = pd.merge(agg_inscription, btc_avg_fee, on="DATE")
+df = pd.merge(agg_inscription, btc_fee_size, on="DATE")
 df = pd.merge(df, daily_btcusd, on="DATE")
-df["ord_sat_vSize"] = df["Ord_vSize_Usage"] / df["Daily_fees"]
+df["ord_sat_vSize"] = df["Ord_vSize_Usage"] / df["Ord_Daily_fees"]
 # Graph params
 
 rangeselector_param = dict(
@@ -59,10 +60,10 @@ def custom_legend_name(figure, new_names: list):
 total_inscriptions = int(max(df.Total_Inscriptions))
 
 # Total Inscription Fees (BTC) to Date
-total_fees_BTC = np.round(max(df.Total_fees), 2)
+total_fees_BTC = np.round(max(df.Ord_Total_fees), 2)
 
 # Total Inscription Fees (USD to Date)
-total_fees_USD = np.round(sum(df.Daily_fees * df.Price), 2)
+total_fees_USD = np.round(sum(df.Ord_Daily_fees * df.Price), 2)
 
 
 ####################################################################################################
@@ -109,27 +110,27 @@ fig2.update_yaxes(title_text="Size Usage")
 fig2.update_layout(legend_title_text="Size")
 custom_legend_name(fig2, ["bytes", "vbytes"])
 
-# Figure 3: Inscription Fees Over Time
-
+# Ordinal Fees paid in USD/BTC Over Time
 fig3 = make_subplots(specs=[[{"secondary_y": True}]])
 fig3.add_trace(
-    go.Scatter(x=df.DATE, y=df.Daily_fees, name="Daily"),
+    go.Scatter(x=df.DATE, y=df.Ord_Daily_fees, name="Daily"),
     secondary_y=False,
 )
 fig3.add_trace(
-    go.Scatter(x=df.DATE, y=df.Total_fees, name="Total"),
+    go.Scatter(x=df.DATE, y=df.Ord_Total_fees, name="Total"),
     secondary_y=True,
 )
+fig3.update_layout(title_text="Ordinal Fees Paid")
 fig3.update_xaxes(
     title_text="Date",
     rangeslider_visible=True,
     rangeselector=rangeselector_param,
     tickformatstops=tickformatstops_param,
 )
-fig3.update_yaxes(title_text="Daily Volume", secondary_y=False)
-fig3.update_yaxes(title_text="Total Volume", secondary_y=True)
-fig3.update_layout(title_text="Inscription Fees")
+fig3.update_yaxes(title_text="Daily Fees", secondary_y=False)
+fig3.update_yaxes(title_text="Total Fees", secondary_y=True)
 custom_legend_name(fig3, ["Daily", "Cumulative"])
+
 
 # Figure 4: Inscription Fee per Category Over Time
 
@@ -216,5 +217,45 @@ fig6 = px.pie(
     title="Proportion of Inscription Types",
 )
 fig6.update_layout(legend_title_text="Inscription Type")
+
+#####################################################################################################
+# Store All Static Figures in Dictionary
+#####################################################################################################
+all_fig = [fig1, fig2, fig3, fig4, fig5, fig6]
+static_fig = {}
+for idx, f in enumerate(all_fig):
+    static_fig.update({f"static-fig-{idx+1}": f})
+
 # custom_legend_name(fig6, ['text', 'image', 'application', '3d model', 'video', 'audio', 'other'])
 # Figure 7: Ordinal Sat/vB
+
+#####################################################################################################
+# Dynamic Figures
+#####################################################################################################
+# def get_fig_callbacks(app):
+    
+#     # Ordinal Fees paid in USD/BTC Over Time
+#     @app.callback(
+        
+#     )
+#     def fig3_callback():
+#         fig3 = make_subplots(specs=[[{"secondary_y": True}]])
+#         fig3.add_trace(
+#             go.Scatter(x=df.DATE, y=df.Ord_Daily_fees, name="Daily"),
+#             secondary_y=False,
+#         )
+#         fig3.add_trace(
+#             go.Scatter(x=df.DATE, y=df.Ord_Total_fees, name="Total"),
+#             secondary_y=True,
+#         )
+#         fig3.update_layout(title_text="Ordinal Fees Paid")
+#         fig3.update_xaxes(
+#             title_text="Date",
+#             rangeslider_visible=True,
+#             rangeselector=rangeselector_param,
+#             tickformatstops=tickformatstops_param,
+#         )
+#         fig3.update_yaxes(title_text="Daily Fees", secondary_y=False)
+#         fig3.update_yaxes(title_text="Total Fees", secondary_y=True)
+#         custom_legend_name(fig3, ["Daily", "Cumulative"])
+#         return fig3
