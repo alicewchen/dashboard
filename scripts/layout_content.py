@@ -29,3 +29,13 @@ def static_graph_html_div(static_fig:dict, comp_id:list):
 num_inscripts_and_ord_size_usage = static_graph_html_div(static_fig, comp_id = ["static-fig-1", "static-fig-2"])
 
 num_inscr_and_p_inscr_type = static_graph_html_div(static_fig, comp_id = ["static-fig-5", "static-fig-6"])
+
+# Dynamic Figures: Generate dcc Graph components with call backs
+
+# Define callback functions
+
+# Define dcc Graph components
+
+# Define html Div components by row
+
+

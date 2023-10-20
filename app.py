@@ -139,7 +139,7 @@ app.layout = html.Div(
             },
         ),
         num_inscr_and_p_inscr_type,
-        html.Div(dcc.Markdown(footnotes), style={"width": "95%", "text-align": "left"}),
+        #html.Div(dcc.Markdown(footnotes), style={"width": "95%", "text-align": "left"}),
     ],
     style={
         # "display": "flex",
