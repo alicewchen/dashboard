@@ -11,9 +11,17 @@ from scripts.static_figures import (
     total_fees_BTC,
     total_fees_USD,
 )
-from scripts.dynamic_figures import dcc_graph_fig1, dcc_graph_fig2
+from scripts.dynamic_figures import (
+    dcc_graph_fig1,
+    dcc_graph_fig2,
+    dcc_graph_fig3,
+    dcc_graph_fig4,
+)
 from scripts.text import ordinal_intro, brc20
-from scripts.layout_content import num_inscripts_and_ord_size_usage, num_inscr_and_p_inscr_type
+from scripts.layout_content import (
+    num_inscripts_and_ord_size_usage,
+    num_inscr_and_p_inscr_type,
+)
 
 # Create the Dash app
 server = app.server
@@ -47,7 +55,7 @@ app.layout = html.Div(
                                     ),
                                 ]
                             )
-                        )
+                        ),
                     ),
                     dbc.Col(
                         dbc.Card(
@@ -63,7 +71,7 @@ app.layout = html.Div(
                                     ),
                                 ]
                             )
-                        )
+                        ),
                     ),
                     dbc.Col(
                         dbc.Card(
@@ -79,40 +87,113 @@ app.layout = html.Div(
                                     ),
                                 ]
                             )
-                        )
+                        ),
                     ),
                 ],
                 align="center",
+                justify="center",
+                style={"width": "100%", "margin": "auto"},
             ),
         ),
         # Introduction
         html.Div(
-            dcc.Markdown(ordinal_intro), style={"width": "95%", "text-align": "justify"}
+            dcc.Markdown(ordinal_intro), style={"width": "95%", "margin": "auto", "text-align": "justify"}
         ),
         # Static Figures: Number of Inscriptions Over Time & Ordinal Size Usage Over Time
         num_inscripts_and_ord_size_usage,
+        # Static Figures: Inscriptions by Category Over Time
+        num_inscr_and_p_inscr_type,
         # Highlight May 2023 BRC-20 minting spree
-        html.Div(dcc.Markdown(brc20), style={"width": "95%", "text-align": "justify"}),
-        # Dynamic Figures: Ordinal Fees paid in USD/BTC Over Time & Inscription Fee USD/BTC per Category Over Time
         html.Div(
+            dbc.Row(
+                [
+                    dbc.Card(
+                        dcc.Markdown(brc20),
+                        style={
+                            "text-align": "justify",
+                            "width": "50%",
+                            "margin": "auto",
+                        },
+                    )
+                ],
+                justify="center",
+                align="center",
+            ),
+        ),
+        # Dynamic Figures: Ordinal Fees paid in USD/BTC Over Time & Inscription Fee USD/BTC per Category Over Time
+        dbc.Row(
             [
                 dbc.Row(
                     dcc.RadioItems(
-                        id="radio-fig3-BTCUSD",
+                        id="radio-fig1-BTCUSD",
                         options=["BTC", "USD"],
                         value="BTC",
+                        labelStyle={"width": "3rem"},
                         inline=True,
                     ),
                     style={"align": "center", "text-align": "center"},
                 ),
                 dbc.Row(
                     [
-                        dbc.Col(
-                            dcc_graph_fig1,
-                            style={"width": "50%"}
-                        ),
+                        dbc.Col(dcc_graph_fig1, style={"width": "50%"}),
                         dbc.Col(
                             dcc_graph_fig2,
+                            style={"width": "50%"},
+                        ),
+                    ],
+                    style={
+                        "display": "flex",
+                        "width": "100%",
+                        "align": "center",
+                        "text-align": "center",
+                    },
+                ),
+            ],
+        ),
+        html.Div(
+            [
+                dbc.Row(
+                    [
+                        dbc.Col(
+                            dcc.RadioItems(
+                                id="radio-fig3-fig4-BTCUSD",
+                                options=["BTC", "USD"],
+                                value="BTC",
+                                inline=True,
+                                labelStyle={"width": "4rem"},
+                                style={"marginRight": "20px"},
+                            ),
+                            style={
+                                "width": "50%",
+                                "text-align": "right",
+                            },
+                        ),
+                        dbc.Col(
+                            dcc.RadioItems(
+                                id="radio-fig3-fig4-byte",
+                                options=["byte", "vbyte"],
+                                value="byte",
+                                labelStyle={"width": "4rem"},
+                                inline=True,
+                            ),
+                            style={
+                                "width": "50%",
+                                "text-align": "left",
+                            },
+                        ),
+                    ],
+                    style={
+                        "display": "flex",
+                        "align": "center",
+                        "text-align": "center",
+                        "width": "100%",
+                    },
+                ),
+                dbc.Row(
+                    [
+                        dbc.Col(dcc_graph_fig3, style={"width": "50%"}),
+                        dbc.Col(
+                            dcc_graph_fig4,
                             style={"width": "50%"},
                         ),
                     ],
@@ -130,13 +211,11 @@ app.layout = html.Div(
                 "text-align": "center",
             },
         ),
-        num_inscr_and_p_inscr_type,
-        #html.Div(dcc.Markdown(footnotes), style={"width": "95%", "text-align": "left"}),
     ],
     style={
-        # "display": "flex",
         "width": "95%",
         "align": "center",
+        "text-align": "center",
     },
 )
 

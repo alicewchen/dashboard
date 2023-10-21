@@ -13,7 +13,9 @@ from scripts.utils_data import (
     tickformatstops_param,
     mime_category_order,
     custom_legend_name,
+    default_update_xaxes,
 )
+
 pio.templates.default = "simple_white"
 
 
@@ -30,6 +32,7 @@ total_fees_BTC = np.round(max(df.Ord_Total_fees), 2)
 # Total Inscription Fees (USD to Date)
 total_fees_USD = np.round(sum(df.Ord_Daily_fees * df.Price), 2)
 
+# Correlation between 
 
 ####################################################################################################
 # Static Graphs
@@ -47,12 +50,7 @@ fig1.add_trace(
     secondary_y=True,
 )
 fig1.update_layout(title_text="Number of Inscriptions")
-fig1.update_xaxes(
-    title_text="Date",
-    rangeslider_visible=True,
-    rangeselector=rangeselector_param,
-    tickformatstops=tickformatstops_param,
-)
+default_update_xaxes(fig1)
 fig1.update_yaxes(title_text="Daily Volume", secondary_y=False)
 fig1.update_yaxes(title_text="Total Volume", secondary_y=True)
 custom_legend_name(fig1, ["Daily", "Cumulative"])
@@ -65,12 +63,7 @@ fig2 = px.line(
     y=["Ord_Size_Usage", "Ord_vSize_Usage"],
     title="Ordinal Size Usage",
 )
-fig2.update_xaxes(
-    title="Date",
-    rangeslider_visible=True,
-    rangeselector=rangeselector_param,
-    tickformatstops=tickformatstops_param,
-)
+default_update_xaxes(fig2)
 fig2.update_yaxes(title_text="Size Usage")
 fig2.update_layout(legend_title_text="Size")
 custom_legend_name(fig2, ["bytes", "vbytes"])
@@ -84,14 +77,9 @@ fig3 = px.bar(
     y="Inscriptions",
     color="MIME_types",
     title="Number of Inscriptions by Type",
-    category_orders=mime_category_order
+    category_orders=mime_category_order,
 )
-fig3.update_xaxes(
-    title="Date",
-    rangeslider_visible=True,
-    rangeselector=rangeselector_param,
-    tickformatstops=tickformatstops_param,
-)
+default_update_xaxes(fig3)
 fig3.update_yaxes(title_text="Number of Inscriptions")
 fig3.update_layout(legend_title_text="Inscription Type")
 custom_legend_name(
@@ -116,37 +104,3 @@ all_fig = [fig1, fig2, fig3, fig4]
 static_fig = {}
 for idx, f in enumerate(all_fig):
     static_fig.update({f"static-fig-{idx+1}": f})
-
-# custom_legend_name(fig4, ['text', 'image', 'application', '3d model', 'video', 'audio', 'other'])
-# Figure 7: Ordinal Sat/vB
-
-#####################################################################################################
-# Dynamic Figures
-#####################################################################################################
-# def get_fig_callbacks(app):
-
-#     # Ordinal Fees paid in USD/BTC Over Time
-#     @app.callback(
-
-#     )
-#     def fig3_callback():
-#         fig3 = make_subplots(specs=[[{"secondary_y": True}]])
-#         fig3.add_trace(
-#             go.Scatter(x=df.DATE, y=df.Ord_Daily_fees, name="Daily"),
-#             secondary_y=False,
-#         )
-#         fig3.add_trace(
-#             go.Scatter(x=df.DATE, y=df.Ord_Total_fees, name="Total"),
-#             secondary_y=True,
-#         )
-#         fig3.update_layout(title_text="Ordinal Fees Paid")
-#         fig3.update_xaxes(
-#             title_text="Date",
-#             rangeslider_visible=True,
-#             rangeselector=rangeselector_param,
-#             tickformatstops=tickformatstops_param,
-#         )
-#         fig3.update_yaxes(title_text="Daily Fees", secondary_y=False)
-#         fig3.update_yaxes(title_text="Total Fees", secondary_y=True)
-#         custom_legend_name(fig3, ["Daily", "Cumulative"])
-#         return fig3
