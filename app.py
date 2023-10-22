@@ -36,7 +36,7 @@ app.layout = html.Div(
         html.H1("Bitcoin Ordinals", style={"text-align": "center"}),
         html.Div(
             dcc.Markdown(
-                "*Data was collected from [Dune](https://dune.com) on Oct 18,2023*"
+                "*Data was last updated on Oct 18,2023*"
             ),
             style={"text-align": "center"},
         ),
