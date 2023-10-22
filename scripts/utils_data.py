@@ -112,8 +112,8 @@ mime_category_order = {
 }
 
 
-df.to_csv("data/clean_data/df.csv")
-inscription_df.to_csv("data/clean_data/inscription_df.csv")
+#df.to_csv("data/clean_data/df.csv")
+#inscription_df.to_csv("data/clean_data/inscription_df.csv")
 ####################################################################################################
 # Custom functions
 ####################################################################################################
