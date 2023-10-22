@@ -9,10 +9,14 @@ inscription_df = pd.read_csv(f"{RAW_DATA_DIR}/inscription_by_category.csv")
 # Merge the dataframes on the 'DATE' column
 df = pd.merge(agg_inscription, btc_fee_size, on="DATE")
 df = pd.merge(df, daily_btcusd, on="DATE")
-df["ord_sat_vSize"] = df["Ord_vSize_Usage"] / df["Ord_Daily_fees"]
 df.loc[:, "Ord_Daily_fees_USD"] = df.Ord_Daily_fees * df.Price
 df.loc[:, "Ord_Total_fees_USD"] = df.Ord_Total_fees * df.Price
 df.loc[:, "btc_Daily_fees_USD"] = df.btc_Daily_fee * df.Price
+df["Ord_Daily_fees_vSize"] = df["Ord_Daily_fees"] / df["Ord_vSize_Usage"] * 100000000
+df["Ord_Daily_fees_vSize_USD"] = df["Ord_Daily_fees_USD"] / df["Ord_vSize_Usage"]
+df["btc_Daily_fees_vSize"] = df["btc_Daily_fee"] / df["btc_vSize_Usage"] * 100000000
+df["btc_Daily_fees_vSize_USD"] = df["btc_Daily_fees_USD"] / df["btc_vSize_Usage"]
+
 
 inscription_df = inscription_df.merge(
     df.loc[:, ["DATE", "Price"]], left_on="DATE", right_on="DATE"
@@ -24,54 +28,28 @@ inscription_df.loc[:, "Ord_Daily_fees_USD"] = (
     inscription_df.Ord_Daily_fees * inscription_df.Price
 )
 inscription_df.loc[:, "Ord_Daily_fees_USD_byte"] = (
-    inscription_df.Ord_Daily_fees_USD
-    / inscription_df.Ord_Size
+    inscription_df.Ord_Daily_fees_USD / inscription_df.Ord_Size
 )
 inscription_df.loc[:, "Ord_Daily_fees_USD_vbyte"] = (
-    inscription_df.Ord_Daily_fees_USD
-    / inscription_df.Ord_vSize
+    inscription_df.Ord_Daily_fees_USD / inscription_df.Ord_vSize
 )
 inscription_df.loc[:, "Ord_Daily_fees_byte"] = (
-    inscription_df.Ord_Daily_fees
-    / inscription_df.Ord_Size
-    * 100000000
+    inscription_df.Ord_Daily_fees / inscription_df.Ord_Size * 100000000
 )
 inscription_df.loc[:, "Ord_Daily_fees_vbyte"] = (
-    inscription_df.Ord_Daily_fees
-    / inscription_df.Ord_vSize
-    * 100000000
+    inscription_df.Ord_Daily_fees / inscription_df.Ord_vSize * 100000000
 )
 inscription_df.loc[:, "Ord_Daily_fees_byte_Per_Inscription"] = (
-    inscription_df.Ord_Daily_fees
-    / inscription_df.Ord_Size
-    * 100000000
-    /inscription_df.Inscriptions
+    inscription_df.Ord_Daily_fees_byte / inscription_df.Inscriptions
 )
 inscription_df.loc[:, "Ord_Daily_fees_vbyte_Per_Inscription"] = (
-    inscription_df.Ord_Daily_fees
-    / inscription_df.Ord_vSize
-    * 100000000
-    /inscription_df.Inscriptions
+    inscription_df.Ord_Daily_fees_vbyte / inscription_df.Inscriptions
 )
 inscription_df.loc[:, "Ord_Daily_fees_USD_vbyte_Per_Inscription"] = (
-    inscription_df.Ord_Daily_fees_USD_vbyte
-    /inscription_df.Inscriptions
+    inscription_df.Ord_Daily_fees_USD_vbyte / inscription_df.Inscriptions
 )
 inscription_df.loc[:, "Ord_Daily_fees_USD_byte_Per_Inscription"] = (
-    inscription_df.Ord_Daily_fees_USD_byte
-    /inscription_df.Inscriptions
-)
-inscription_df.loc[:, "Ord_Daily_fees_byte_Per_Inscription"] = (
-    inscription_df.Ord_Daily_fees
-    / inscription_df.Ord_Size
-    * 100000000
-    /inscription_df.Inscriptions
-)
-inscription_df.loc[:, "Ord_Daily_fees_vbyte_Per_Inscription"] = (
-    inscription_df.Ord_Daily_fees
-    / inscription_df.Ord_vSize
-    * 100000000
-    /inscription_df.Inscriptions
+    inscription_df.Ord_Daily_fees_USD_byte / inscription_df.Inscriptions
 )
 inscription_df.loc[:, "Ord_Size_Per_Inscription"] = (
     inscription_df.Ord_Size / inscription_df.Inscriptions
@@ -112,8 +90,8 @@ mime_category_order = {
 }
 
 
-#df.to_csv("data/clean_data/df.csv")
-#inscription_df.to_csv("data/clean_data/inscription_df.csv")
+# df.to_csv("data/clean_data/df.csv")
+# inscription_df.to_csv("data/clean_data/inscription_df.csv")
 ####################################################################################################
 # Custom functions
 ####################################################################################################
