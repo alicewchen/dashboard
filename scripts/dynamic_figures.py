@@ -29,17 +29,23 @@ dcc_graph_fig2 = dcc.Graph(id="dynamic-fig-2")
 )
 def update_figure_fig1(value: str):
     if value == "BTC":
+        ylab = "Fees (sats/vB)"
         fig1_y1 = df.Ord_Daily_fees
         fig1_y2 = df.Ord_Total_fees
-        fig2_y = "Ord_Daily_fees"
-        ylab = "Daily Fees (BTC)"
-        ylab_tot = "Total Fees (BTC)"
+        fig1_ylab_tot = "Total Fees (\u20BF)"
+        fig2_y1 = df.Ord_Daily_fees_vSize 
+        fig2_y2 = df.btc_Daily_fees_vSize 
+        
+        
     elif value == "USD":
+        ylab = "Fees ($/vB)"
         fig1_y1 = df.Ord_Daily_fees_USD
         fig1_y2 = df.Ord_Total_fees_USD
-        fig2_y = "Ord_Daily_fees_USD"
-        ylab = "Daily Fees (USD)"
-        ylab_tot = "Total Fees (USD)"
+        fig1_ylab_tot = "Total Fees (USD)"
+        fig2_y1 = df.Ord_Daily_fees_vSize_USD
+        fig2_y2 = df.btc_Daily_fees_vSize_USD
+        
+
 
     # Figure 1: Ordinal Fees paid in USD/BTC Over Time
     fig1 = make_subplots(specs=[[{"secondary_y": True}]])
@@ -54,24 +60,23 @@ def update_figure_fig1(value: str):
     fig1.update_layout(title_text="Ordinal Fees Paid")
     default_update_xaxes(fig1)
     fig1.update_yaxes(title_text=ylab, secondary_y=False)
-    fig1.update_yaxes(title_text=ylab_tot, secondary_y=True)
+    fig1.update_yaxes(title_text=fig1_ylab_tot, secondary_y=True)
     custom_legend_name(fig1, ["Daily", "Cumulative"])
 
-    # Figure 2: Inscription Fee per Category Over Time
-    fig2 = px.line(
-        inscription_df,
-        x="DATE",
-        y=fig2_y,
-        color="MIME_types",
-        title="Daily Fees by Inscription Type",
-        category_orders=mime_category_order,
+    # Figure 2: Average Inscription Fee/Byte Over Time (BTC/USD) compare to Average Fees (Inscription+Non-Inscription)
+
+    fig2 = make_subplots(specs=[[{"secondary_y": True}]])
+    fig2.add_trace(
+        go.Scatter(x=df.DATE, y=fig2_y1, name="Inscription"),
+        secondary_y=False,
     )
+    fig2.add_trace(
+        go.Scatter(x=df.DATE, y=fig2_y2, name="All"),
+        secondary_y=False,
+    )
+    fig2.update_layout(title_text="Daily Average Transaction " + ylab)
     default_update_xaxes(fig2)
-    fig2.update_yaxes(title_text=ylab)
-    fig2.update_layout(legend_title_text="Inscription Type")
-    custom_legend_name(
-        fig2, ["text", "image", "application", "3D model", "video", "audio", "other"]
-    )
+    fig2.update_yaxes(title_text=ylab, secondary_y=False)
 
     return fig1, fig2
 
@@ -89,49 +94,42 @@ dcc_graph_fig4 = dcc.Graph(id="dynamic-fig-4")
 @app.callback(
     Output("dynamic-fig-3", "figure"),
     Output("dynamic-fig-4", "figure"),
-    Input("radio-fig3-fig4-byte", "value"),
     Input("radio-fig3-fig4-BTCUSD", "value"),
 )
-def update_fig3_fig4(bytes_value: str, value: str):
-    if bytes_value == "byte":
-        ord_denominator = df.Ord_Size_Usage
-        btc_denominator = df.btc_Size_Usage
-        fig4_x = "Ord_Size_Per_Inscription"
-
-    elif bytes_value == "vbyte":
-        ord_denominator = df.Ord_vSize_Usage
-        btc_denominator = df.btc_vSize_Usage
-        fig4_x = "Ord_vSize_Per_Inscription"
+def update_fig3_fig4(value: str):
 
     if value == "BTC":
-        fig3_y1 = df.Ord_Daily_fees / ord_denominator * 100000000
-        fig3_y2 = df.btc_Daily_fee / btc_denominator * 100000000
-        fig3_ylab = f"Fees (sats/{bytes_value})"
-        fig4_z = f"Ord_Daily_fees_{bytes_value}_Per_Inscription"
-        fig4_zlab = f"Inscription Fees (sats/{bytes_value})"
+        fig3_y = "Ord_Daily_fees"
+        fig3_ylab = "Daily Fees (\u20BF)"
+        fig4_z = f"Ord_Daily_fees_vbyte_Per_Inscription"
+        fig4_zlab = f"Inscription Fees (sats/vB)"
 
     elif value == "USD":
-        fig3_y1 = df.Ord_Daily_fees_USD / ord_denominator
-        fig3_y2 = df.btc_Daily_fees_USD / btc_denominator
-        fig3_ylab = f"Fees ($/{bytes_value})"
-        fig4_z = f"Ord_Daily_fees_USD_{bytes_value}_Per_Inscription"
-        fig4_zlab = f"Fees ($/{bytes_value})"
-
-    fig4_xlab = f"{bytes_value}s per Inscription"
-    # Figure 3: Average Inscription Fee/Byte Over Time (BTC/USD) compare to Average Fees (Inscription+Non-Inscription)
-
-    fig3 = make_subplots(specs=[[{"secondary_y": True}]])
-    fig3.add_trace(
-        go.Scatter(x=df.DATE, y=fig3_y1, name="Inscription"),
-        secondary_y=False,
+        fig3_y = "Ord_Daily_fees_USD"
+        fig3_ylab = "Daily Fees (USD)"
+        
+        fig4_z = f"Ord_Daily_fees_USD_vbyte_Per_Inscription"
+        fig4_zlab = f"Fees ($/vB)"
+    fig4_x = "Ord_vSize_Per_Inscription"
+    fig4_xlab = "vB per Inscription"
+    
+    # Figure 2: Inscription Fee per Category Over Time
+    fig3 = px.line(
+        inscription_df,
+        x="DATE",
+        y=fig3_y,
+        color="MIME_types",
+        title="Daily Fees by Inscription Type",
+        category_orders=mime_category_order,
     )
-    fig3.add_trace(
-        go.Scatter(x=df.DATE, y=fig3_y2, name="All"),
-        secondary_y=False,
-    )
-    fig3.update_layout(title_text="Daily Average Transaction " + fig3_ylab)
     default_update_xaxes(fig3)
-    fig3.update_yaxes(title_text=fig3_ylab, secondary_y=False)
+    fig3.update_yaxes(title_text=fig3_ylab)
+    fig3.update_layout(legend_title_text="Inscription Type")
+    custom_legend_name(
+        fig3, ["text", "image", "application", "3D model", "video", "audio", "other"]
+    )
+    
+    
 
     # Figure 4: Relationship between Average Inscription Fee/Byte and Ord_Size per Category
     fig4 = px.scatter_3d(
@@ -145,6 +143,7 @@ def update_fig3_fig4(bytes_value: str, value: str):
         log_z=True,
     )
     fig4.update_traces(marker=dict(size=2))
+    fig4.update_layout(legend_title_text="Inscription Type")
     # default_update_xaxes(fig4)
     fig4.update_layout(scene = dict(
                     xaxis_title=fig4_xlab,
