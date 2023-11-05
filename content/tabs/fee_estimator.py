@@ -53,5 +53,5 @@ def estimate_fee(ord_size, n):
         data = pd.DataFrame({"Ord_vSize_Per_Inscription": [log10(ord_size)], "Inscriptions": [log10(n)]})
         y_pred = model.predict(data).reshape(-1,1)
         total_fee = 10**y_pred[0][0]*n*ord_size
-        output = f"{y_pred[0][0]:.2f} sats/vB/Inscription \n {total_fee:.2f} sats"
+        output = f"{10**y_pred[0][0]:.2f} sats/vB/Inscription \n {total_fee:.2f} sats"
         return output
