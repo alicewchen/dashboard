@@ -52,6 +52,7 @@ def estimate_fee(ord_size, n):
         model = sio.load("models/linear_model.skops", trusted=True)
         data = pd.DataFrame({"Ord_vSize_Per_Inscription": [log10(ord_size)], "Inscriptions": [log10(n)]})
         y_pred = model.predict(data).reshape(-1,1)
-        total_fee = y_pred[0][0]*n*ord_size
-        output = f"{total_fee:.2f} sats"
+        total_fee = 10**y_pred[0][0]*n*ord_size
+        output = f"{y_pred[0][0]:.2f} sats/vB/Inscription"
+        #output = f"{total_fee:.2f} sats"
         return output
