@@ -1,0 +1,9 @@
+version: '3'
+services:
+  btc-dashboard:
+    build: '.'
+    image: btc-dashboard:latest
+    ports:
+      - '8050:8050'
+    restart: "always"
+    #command: pytest
