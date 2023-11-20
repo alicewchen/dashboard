@@ -4,5 +4,5 @@ services:
     build: '.'
     image: btc-dashboard:latest
     ports:
-      - '8050:8050'
+      - '8000:8000'
     #command: pytest
