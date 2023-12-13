@@ -34,12 +34,12 @@ server = app.server
 app.layout = html.Div(
     children=[
         html.H1("Bitcoin Ordinals", style={"text-align": "center"}),
-        html.Div(
-            dcc.Markdown(
-                "*Data was last updated on Oct 18,2023*"
-            ),
-            style={"text-align": "center"},
-        ),
+        # html.Div(
+        #     dcc.Markdown(
+        #         "*Data was last updated on Oct 18,2023*"
+        #     ),
+        #     style={"text-align": "center"},
+        # ),
         dbc.Tabs([tab_overview,tab_inscription_type,tab_fee_estimator]),
     ],
     style={
@@ -50,4 +50,4 @@ app.layout = html.Div(
 )
 
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=False,host='0.0.0.0')
